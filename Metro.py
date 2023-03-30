@@ -68,8 +68,6 @@ class Metro:
 
             self.data_total["weather_main"] = list(self.data_total["weather_main"])
 
-
-
             self.data_total["weather_description"] = self.data_total["weather_description"].str.upper()
 
             weather_desc_temp = len(self.data_total["weather_description"].unique())
