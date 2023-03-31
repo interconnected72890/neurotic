@@ -38,11 +38,15 @@ class LinearModel(nn.Module):
         self.lin3 = nn.Linear(256, 128)
         self.lin4 = nn.Linear(128, 64)
         self.lin5 = nn.Linear(64, 1)
+        self.drop = nn.Dropout(0.2)
 
     def forward(self, x):
         x = nn.functional.leaky_relu(self.lin1(x))
+        x = self.drop(x)
         x = nn.functional.leaky_relu(self.lin2(x))
+        x = self.drop(x)
         x = nn.functional.leaky_relu(self.lin3(x))
+        x = self.drop(x)
         x = nn.functional.leaky_relu(self.lin4(x))
         x = nn.functional.leaky_relu(self.lin5(x))
         return x
