@@ -15,7 +15,7 @@ model = torch.nn.Sequential(
 
     torch.nn.Conv2d(kernel_size=(3, 3), in_channels=16, out_channels=8),
     torch.nn.LeakyReLU(),
-    # torch.nn.MaxPool2d(kernel_size=(2, 2), padding=1),
+    torch.nn.MaxPool2d(kernel_size=(2, 2), padding=1),
 
     torch.nn.Flatten(),
 
@@ -25,23 +25,26 @@ model = torch.nn.Sequential(
     torch.nn.LeakyReLU(),
     torch.nn.Linear(in_features=500, out_features=10),
     torch.nn.LogSoftmax(dim=1)
+
 )
 
 model = model.to(device)
 
 
+batch_size = 128
+
 # Get Data
 transform = torchvision.transforms.Compose([torchvision.transforms.ToTensor(), torchvision.transforms.Normalize((0.5,), (0.5,)).to(device),])
 
 mnist_trainset = torchvision.datasets.MNIST(root='./data', train=True, download=True, transform=transform)
-train_loader = torch.utils.data.DataLoader(mnist_trainset, batch_size=128, shuffle=True)
+train_loader = torch.utils.data.DataLoader(mnist_trainset, batch_size=batch_size, shuffle=True)
 
 mnist_testset = torchvision.datasets.MNIST(root='./data', train=False, download=True, transform=transform)
-test_loader = torch.utils.data.DataLoader(mnist_testset, batch_size=128, shuffle=True)
+test_loader = torch.utils.data.DataLoader(mnist_testset, batch_size=batch_size, shuffle=True)
 
 
 n_iters = 1000
-num_epochs = int(n_iters / (len(mnist_trainset) / 128))
+num_epochs = int(n_iters / (len(mnist_trainset) / batch_size))
 
 
 # Get Model

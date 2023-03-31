@@ -14,10 +14,10 @@ class Steel:
                         'Lagging_Current_Power_Factor', 'Leading_Current_Power_Factor', 'NSM',
                         'WeekStatus', 'Day_of_week', 'Load_Type']
         self.data_total = None
-        self.x_train = []
-        self.y_train = []
-        self.x_test = []
-        self.y_test = []
+        self.x_train = None
+        self.y_train = None
+        self.x_test = None
+        self.y_test = None
 
     def split_data(self, rand_state=7):
         self.x_train, self.x_test, self.y_train, self.y_test = train_test_split(self.x_train, self.y_train,
@@ -104,26 +104,19 @@ class Steel:
 
             self.data_total["Load_Type"] = list(self.data_total["Load_Type"])
 
-            # for x in self.columns:
-            #     print(x + ": " + str(len(self.data_total[x].unique())))
-            # print(len(self.data_total['CO2(tCO2)'].unique()))
-
         else:
             print("Already has Data")
 
     def get_xy_train(self):
-        return
-        # self.x_train = self.data_total.drop(["traffic_volume", "date_time"], axis=1)
-        # self.data_total["traffic_volume"][:] -= self.data_total["traffic_volume"].min()
-        # self.data_total["traffic_volume"][:] /= self.data_total["traffic_volume"].max()
-        # self.y_train = self.data_total["traffic_volume"]
+        self.x_train = self.data_total.drop(["Usage_kWh"], axis=1)
+        self.y_train = self.data_total["Usage_kWh"]
 
     def test(self):
         print(self.y_train)
 
     def clean_csv(self, file):
         if os.path.exists(file):
-            temp = "tr -d '" + '"' + "' < " + file + " > clean_" + file
+            temp = "tr -d '" + '"[] ' + "' < " + file + " > clean_" + file
             os.system(temp)
             temp = "mv clean_" + file + " " + file
             os.system(temp)
@@ -131,11 +124,19 @@ class Steel:
 
 steel = Steel()
 steel.get_data()
-print(steel.data_total.head())
-# metro.get_xy_train()
-steel.data_total.to_csv("steel_data.csv", index=False)
-steel.clean_csv("steel_data.csv")
-# metro.test()
-# print(metro.data_total["holiday"][:10])
-# print(metro.data_total["temp"][:10])
-os.system("head steel_data.csv")
+steel.get_xy_train()
+steel.split_data()
+
+path_str = "steel_data_"
+
+steel.x_train.to_csv(path_str + "x_train.csv", index=False, header=False)
+steel.clean_csv(path_str + "x_train.csv")
+
+steel.x_test.to_csv(path_str + "x_test.csv", index=False, header=False)
+steel.clean_csv(path_str + "x_test.csv")
+
+steel.y_train.to_csv(path_str + "y_train.csv", index=False, header=False)
+steel.clean_csv(path_str + "y_train.csv")
+
+steel.y_test.to_csv(path_str + "y_test.csv", index=False, header=False)
+steel.clean_csv(path_str + "y_test.csv")
